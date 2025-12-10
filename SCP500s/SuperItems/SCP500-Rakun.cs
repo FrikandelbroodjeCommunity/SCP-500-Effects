@@ -1,126 +1,39 @@
-using System.Collections.Generic;
-using System.Linq;
-using Exiled.API.Enums;
-using Exiled.API.Features;
-using Exiled.API.Features.Spawn;
-using Exiled.CustomItems.API.Features;
-using Exiled.Events.EventArgs.Map;
-using Exiled.Events.EventArgs.Player;
-using Mirror;
+using FrikanUtils.Spawnpoints;
+using FrikanUtils.Spawnpoints.LootSpawn;
+using LabApi.Features.Wrappers;
 using UnityEngine;
 
 namespace SCP500s.SuperItems;
 
-public class Scp500Rakun :  CustomItem
+public class Scp500Rakun : SCP500Base
 {
-    public override uint Id { get; set; } = 6;
-    public override string Name { get; set; } =  "SCP500 Rakun";
-    public override string Description { get; set; } = "Shrinks your body after eating it.";
-    public override float Weight { get; set; } = 1.5f;
-    public override SpawnProperties? SpawnProperties { get; set; } = new()
+    public override string Id => "gamendegamer.scp-500.shrink";
+    public override string Name => "SCP500 'Drink me'";
+    public override string Description => "Shrinks your body after consuming it.";
+    public override ItemType VisualType => ItemType.SCP500;
+
+    public override SpawnLocation SpawnLocation { get; } = new()
     {
-        Limit = 1,
-        DynamicSpawnPoints = new List<DynamicSpawnPoint>
+        Points = new ISpawnPoint[]
         {
-            new()
+            new LootSpawnPoint
             {
                 Chance = 100,
-                Location = SpawnLocationType.InsideLczWc,
+                Point = LootPoint.WCs
             },
-            new()
+            new LootSpawnPoint
             {
-                Chance = 80,
-                Location = SpawnLocationType.Inside914,
-            },
-        },
-    };
-    public override ItemType Type { get; set; } = ItemType.SCP500;
-
-    protected override void SubscribeEvents()
-
-    {
-        Exiled.Events.Handlers.Player.UsedItem += UsedItem;
-        Exiled.Events.Handlers.Player.Spawned += OnSpawned;
-        Exiled.Events.Handlers.Map.PickupAdded += AddGlow;
-        Exiled.Events.Handlers.Map.PickupDestroyed += RemoveGlow;
-        Log.Debug("Subscribed");
-        base.SubscribeEvents();
-    }
-
-    protected override void UnsubscribeEvents()
-    {
-        Exiled.Events.Handlers.Player.UsedItem -= UsedItem;
-        Exiled.Events.Handlers.Map.PickupAdded -= AddGlow;
-        Exiled.Events.Handlers.Map.PickupDestroyed -= RemoveGlow;
-        Log.Debug("Unsubscribed");
-        base.UnsubscribeEvents();
-    }
-    private void UsedItem(UsedItemEventArgs eventArgs)
-    {
-        if (Check(eventArgs.Item))
-        {
-            eventArgs.Player.ShowHint(Main.Instance.Config.SCP500Rakun);
-            eventArgs.Player.Scale = new Vector3(0.5f, 0.5f, 0.5f);
-            eventArgs.Usable.Destroy();
-        }
-
-        if (eventArgs.Player.IsDead)
-        {
-            eventArgs.Player.Health = 0;
-        }
-    }
-
-    private void OnSpawned(SpawnedEventArgs eventArgs)
-    {
-        eventArgs.Player.Scale = new Vector3(1f, 1f, 1f);
-    }
-    public Color glowColor = new Color32(0x94, 0x00, 0xD3, 0xFF);
-
-    private Dictionary<Exiled.API.Features.Pickups.Pickup, Exiled.API.Features.Toys.Light> ActiveLights = [];
-    
-    public void RemoveGlow(PickupDestroyedEventArgs ev)
-    {
-        if (Check(ev.Pickup))
-        {
-            if (ev.Pickup != null)
-            {
-                if (ev.Pickup?.Base?.gameObject == null) return;
-                if (TryGet(ev.Pickup.Serial, out CustomItem ci) && ci != null)
-                {
-                    if (ev.Pickup == null || !ActiveLights.ContainsKey(ev.Pickup)) return;
-                    Exiled.API.Features.Toys.Light light = ActiveLights[ev.Pickup];
-                    if (light != null && light.Base != null)
-                    {
-                        NetworkServer.Destroy(light.Base.gameObject);
-                    }
-                    ActiveLights.Remove(ev.Pickup);
-                }
+                Chance = 100,
+                Point = LootPoint.Scp914Shelve
             }
         }
+    };
 
-    }
-    public void AddGlow(PickupAddedEventArgs ev)
+    protected override void OnUsedItem(Player player, UsableItem item)
     {
-        if (Check(ev.Pickup) && ev.Pickup.PreviousOwner != null)
-        {
-            if (ev.Pickup?.Base?.gameObject == null) return;
-            TryGet(ev.Pickup, out CustomItem ci);
-            Log.Debug($"Pickup is CI: {ev.Pickup.Serial} | {ci.Id} | {ci.Name}");
+        base.OnUsedItem(player, item);
 
-            var light = Exiled.API.Features.Toys.Light.Create(ev.Pickup.Position);
-            light.Color = glowColor;
-
-            light.Intensity = 0.7f;
-            light.Range = 0.5f;
-            light.ShadowType = LightShadows.None;
-
-            light.Base.gameObject.transform.SetParent(ev.Pickup.Base.gameObject.transform);
-            ActiveLights[ev.Pickup] = light;
-        }
+        player.Scale = Vector3.one * 0.5f;
+        player.SendHint(Main.Instance.Config.Scp500Rakun, 7);
     }
 }
-
-
-
-
-

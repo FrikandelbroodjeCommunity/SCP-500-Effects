@@ -1,116 +1,76 @@
 using System.Collections.Generic;
-using Exiled.API.Enums;
-using Exiled.API.Features;
-using Exiled.API.Features.Spawn;
-using Exiled.CustomItems.API.Features;
-using Exiled.Events.EventArgs.Map;
-using Exiled.Events.EventArgs.Player;
-using Mirror;
-using UnityEngine;
+using CustomPlayerEffects;
+using FrikanUtils.Spawnpoints;
+using FrikanUtils.Spawnpoints.LootSpawn;
+using LabApi.Events.Arguments.PlayerEvents;
+using LabApi.Events.Handlers;
+using LabApi.Features.Wrappers;
+using MEC;
+using PlayerStatsSystem;
 
 namespace SCP500s.SuperItems;
 
-public class Scp500Super : CustomItem
+public class Scp500Super : SCP500Base
 {
-    public override uint Id { get; set; } = 4;
-    public override string Name { get; set; } = "Super SCP500";
-    public override string Description { get; set; } = "Eat this to move faster and walk silently, but you lose the use of your hands.";
-    public override float Weight { get; set; } = 1.5f;
-    public override ItemType Type { get; set; } = ItemType.SCP500;
-    public override SpawnProperties? SpawnProperties { get; set; } = new()
+    public override string Id => "gamendegamer.scp-500.super";
+    public override string Name => "Super SCP500";
+
+    public override string Description =>
+        "Eat this to move faster and walk silently, but you lose the use of your hands.";
+
+    public override ItemType VisualType => ItemType.SCP500;
+
+    public override SpawnLocation SpawnLocation { get; } = new()
     {
-        Limit = 1,
-        DynamicSpawnPoints = new List<DynamicSpawnPoint>
+        Points = new ISpawnPoint[]
         {
-            new()
+            new LootSpawnPoint
             {
                 Chance = 100,
-                Location = SpawnLocationType.InsideHidUpper,
+                Point = LootPoint.MicroHIDContainment
             },
-            new()
+            new LootSpawnPoint
             {
                 Chance = 100,
-                Location = SpawnLocationType.InsideGateB,
-            },
-        },
+                Point = LootPoint.PCsStoriedDesk
+            }
+        }
     };
+
+    internal static readonly HashSet<Player> SeveredHands = new();
+
     protected override void SubscribeEvents()
     {
-        Exiled.Events.Handlers.Player.UsedItem += UsedItem;
-        Exiled.Events.Handlers.Map.PickupAdded += AddGlow;
-        Exiled.Events.Handlers.Map.PickupDestroyed += RemoveGlow;
-
         base.SubscribeEvents();
+        PlayerEvents.Hurting += OnPlayerHurting;
     }
 
     protected override void UnsubscribeEvents()
     {
-        Exiled.Events.Handlers.Player.UsedItem -= UsedItem;
-        Exiled.Events.Handlers.Map.PickupAdded -= AddGlow;
-        Exiled.Events.Handlers.Map.PickupDestroyed -= RemoveGlow;
-
         base.UnsubscribeEvents();
+        PlayerEvents.Hurting -= OnPlayerHurting;
     }
 
-    private void UsedItem(UsedItemEventArgs eventArgs)
+    protected override void OnUsedItem(Player player, UsableItem item)
     {
-        if (Check(eventArgs.Item))
+        base.OnUsedItem(player, item);
+
+        player.SendHint(Main.Instance.Config.Scp500Super, 7);
+        player.EnableEffect<Invisible>(1, 7f);
+        player.EnableEffect<MovementBoost>(1, 50);
+        player.EnableEffect<SilentWalk>(1, 7f);
+        player.EnableEffect<SeveredHands>(1, 1f);
+        SeveredHands.Add(player);
+
+        Timing.CallDelayed(7f, () => SeveredHands.Remove(player));
+    }
+
+    private static void OnPlayerHurting(PlayerHurtingEventArgs ev)
+    {
+        if (SeveredHands.Contains(ev.Player) && ev.DamageHandler is UniversalDamageHandler universalHandler &&
+            universalHandler.TranslationId == DeathTranslations.SeveredHands.Id)
         {
-            eventArgs.Player.ShowHint(Main.Instance.Config.SCP500super);
-            eventArgs.Player.EnableEffect(EffectType.Invisible, 7f);
-            eventArgs.Player.EnableEffect(EffectType.MovementBoost, 50);
-            eventArgs.Player.EnableEffect(EffectType.SilentWalk, 7f);
-            eventArgs.Player.EnableEffect(EffectType.SeveredHands,1f);
+            ev.IsAllowed = false;
         }
     }
-    public Color glowColor = new Color32(0x00, 0xFF, 0xFF, 0xFF);
-
-    private Dictionary<Exiled.API.Features.Pickups.Pickup, Exiled.API.Features.Toys.Light> ActiveLights = [];
-    
-    public void RemoveGlow(PickupDestroyedEventArgs ev)
-    {
-        if (Check(ev.Pickup))
-        {
-            if (ev.Pickup != null)
-            {
-                if (ev.Pickup?.Base?.gameObject == null) return;
-                if (TryGet(ev.Pickup.Serial, out CustomItem ci) && ci != null)
-                {
-                    if (ev.Pickup == null || !ActiveLights.ContainsKey(ev.Pickup)) return;
-                    Exiled.API.Features.Toys.Light light = ActiveLights[ev.Pickup];
-                    if (light != null && light.Base != null)
-                    {
-                        NetworkServer.Destroy(light.Base.gameObject);
-                    }
-                    ActiveLights.Remove(ev.Pickup);
-                }
-            }
-        }
-
-    }
-    public void AddGlow(PickupAddedEventArgs ev)
-    {
-        if (Check(ev.Pickup) && ev.Pickup.PreviousOwner != null)
-        {
-            if (ev.Pickup?.Base?.gameObject == null) return;
-            TryGet(ev.Pickup, out CustomItem ci);
-            Log.Debug($"Pickup is CI: {ev.Pickup.Serial} | {ci.Id} | {ci.Name}");
-
-            var light = Exiled.API.Features.Toys.Light.Create(ev.Pickup.Position);
-            light.Color = glowColor;
-
-            light.Intensity = 0.7f;
-            light.Range = 0.5f;
-            light.ShadowType = LightShadows.Hard;
-
-            light.Base.gameObject.transform.SetParent(ev.Pickup.Base.gameObject.transform);
-            ActiveLights[ev.Pickup] = light;
-        }
-    }
-
-    
 }
-
-
-
-

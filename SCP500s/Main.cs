@@ -1,58 +1,60 @@
-
 using System;
-using System.Linq;
-using Exiled.API.Enums;
-using Exiled.API.Features;
-using Exiled.CustomItems;
-using Exiled.CustomItems.API;
-using Exiled.CustomItems.API.Features;
-using Exiled.Events.Features;
+using FrikanUtils.CustomItems;
+using LabApi.Events.Handlers;
+using LabApi.Features;
+using LabApi.Loader.Features.Plugins;
 using SCP500s.SuperItems;
-using UnityEngine;
 
 
 namespace SCP500s
 {
     public class Main : Plugin<Config>
     {
-        public override string Name { get; } = "SCP500s";
-        public override string Author { get;} = "VividZap - Lumi";
-        public override string Prefix { get; } = "SCP500s";
-        public override Version Version { get; } = new Version(4, 0, 0);
-        public override Version RequiredExiledVersion { get; } = new Version(9, 10, 0);
-        public static Main Instance { get; set; } 
-        
-        public override void OnEnabled()
+        public override string Name => "SCP500s";
+        public override string Description => "Adds custom effects to SCP-500";
+        public override string Author => "VividZap - Lumi";
+        public override Version Version { get; } = new(4, 0, 0);
+        public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
+
+        public static Main Instance { get; set; }
+
+        private static readonly Scp500Ops Ops = new();
+        private static readonly Scp500Rakun Rakun = new();
+        private static readonly Scp500Santa Santa = new();
+        private static readonly Scp500Shadow Shadow = new();
+        private static readonly Scp500Sonic Sonic = new();
+        private static readonly Scp500Super Super = new();
+
+        public override void Enable()
         {
-            CustomItem.RegisterItems();
-            new SCP500_47().Register();
-            new SCP500_IG().Register();
-            new SCP500_Lumien().Register();
-            new SCP500_Lucky().Register();
-            new Scp500Super().Register();
-            new Scp500Ops().Register();
-            new Scp500Rakun().Register();
-            new Scp500Santa().Register();
-            new Scp500Shadow().Register();
-            new Scp500Sonic().Register();
-            new SCP500_Aphera().Register();
-            new SCP500_Xerneas().Register();
-            new Scp500Yamato().Register();
-            
             Instance = this;
-            Log.Info("Scp500s plugin loaded");
-            base.OnEnabled();
+
+            CustomItemHandler.RegisterCustomItem(Ops);
+            CustomItemHandler.RegisterCustomItem(Rakun);
+            CustomItemHandler.RegisterCustomItem(Santa);
+            CustomItemHandler.RegisterCustomItem(Shadow);
+            CustomItemHandler.RegisterCustomItem(Sonic);
+            CustomItemHandler.RegisterCustomItem(Super);
+
+            ServerEvents.WaitingForPlayers += OnWaitingForPlayers;
         }
 
-        public override void OnDisabled()
+        public override void Disable()
         {
-            CustomItem.UnregisterItems();
-            Log.Info("Scp500s plugin unloaded");
-            base.OnDisabled();
+            CustomItemHandler.UnregisterCustomItem(Ops);
+            CustomItemHandler.UnregisterCustomItem(Rakun);
+            CustomItemHandler.UnregisterCustomItem(Santa);
+            CustomItemHandler.UnregisterCustomItem(Shadow);
+            CustomItemHandler.UnregisterCustomItem(Sonic);
+            CustomItemHandler.UnregisterCustomItem(Super);
+
+            ServerEvents.WaitingForPlayers -= OnWaitingForPlayers;
         }
-      
+
+        private static void OnWaitingForPlayers()
+        {
+            SCP500Base.ActiveLights.Clear();
+            Scp500Super.SeveredHands.Clear();
+        }
     }
 }
-
-    
-
