@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SCP500s.SuperItems;
 
-public abstract class SCP500Base : CustomItem
+public abstract class Scp500Base : CustomItem
 {
     internal static readonly Dictionary<ushort, LightSourceToy> ActiveLights = new();
 

@@ -18,8 +18,8 @@ namespace SCP500s
 
         public static Main Instance { get; set; }
 
+        private static readonly Scp500DrinkMe DrinkMe = new();
         private static readonly Scp500Ops Ops = new();
-        private static readonly Scp500Rakun Rakun = new();
         private static readonly Scp500Santa Santa = new();
         private static readonly Scp500Shadow Shadow = new();
         private static readonly Scp500Sonic Sonic = new();
@@ -29,8 +29,8 @@ namespace SCP500s
         {
             Instance = this;
 
+            CustomItemHandler.RegisterCustomItem(DrinkMe);
             CustomItemHandler.RegisterCustomItem(Ops);
-            CustomItemHandler.RegisterCustomItem(Rakun);
             CustomItemHandler.RegisterCustomItem(Santa);
             CustomItemHandler.RegisterCustomItem(Shadow);
             CustomItemHandler.RegisterCustomItem(Sonic);
@@ -41,8 +41,8 @@ namespace SCP500s
 
         public override void Disable()
         {
+            CustomItemHandler.UnregisterCustomItem(DrinkMe);
             CustomItemHandler.UnregisterCustomItem(Ops);
-            CustomItemHandler.UnregisterCustomItem(Rakun);
             CustomItemHandler.UnregisterCustomItem(Santa);
             CustomItemHandler.UnregisterCustomItem(Shadow);
             CustomItemHandler.UnregisterCustomItem(Sonic);
@@ -53,7 +53,7 @@ namespace SCP500s
 
         private static void OnWaitingForPlayers()
         {
-            SCP500Base.ActiveLights.Clear();
+            Scp500Base.ActiveLights.Clear();
             Scp500Super.SeveredHands.Clear();
         }
     }

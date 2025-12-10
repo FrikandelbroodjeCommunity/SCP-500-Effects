@@ -37,13 +37,13 @@
         <Compile Include="Config.cs"/>
         <Compile Include="Main.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="SuperItems\SCP500-Ops.cs"/>
-        <Compile Include="SuperItems\SCP500-Rakun.cs"/>
-        <Compile Include="SuperItems\SCP500-Santa.cs"/>
-        <Compile Include="SuperItems\SCP500-Shadow.cs"/>
-        <Compile Include="SuperItems\SCP500-Sonic.cs"/>
-        <Compile Include="SuperItems\SCP500-Super.cs"/>
-        <Compile Include="SuperItems\SCP500Base.cs" />
+        <Compile Include="SuperItems\Scp500Ops.cs" />
+        <Compile Include="SuperItems\Scp500DrinkMe.cs" />
+        <Compile Include="SuperItems\Scp500Santa.cs" />
+        <Compile Include="SuperItems\Scp500Shadow.cs" />
+        <Compile Include="SuperItems\Scp500Sonic.cs" />
+        <Compile Include="SuperItems\Scp500Super.cs" />
+        <Compile Include="SuperItems\Scp500Base.cs" />
     </ItemGroup>
     <ItemGroup>
         <None Include="App.config"/>
