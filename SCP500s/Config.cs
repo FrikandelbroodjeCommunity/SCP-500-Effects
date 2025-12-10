@@ -5,6 +5,13 @@ namespace SCP500s;
 
 public class Config
 {
+    public string Scp500Aphera { get; set; } = "<color=#87457A>[Where is my head?]</color>";
+    public string Scp500Lucky { get; set; } = "<color=#87457A>[Was luck on your side?]</color>";
+    public string Scp500Swap { get; set; } = "<color=#87457A>[The worst betrayal]</color>";
+
+    public string Scp500Teleport { get; set; } =
+        "<color=#87457A>[You teleported to a random room in the facility]</color>";
+
     public string Scp500Rakun { get; set; } = "<color=#87457A>[Wow good kid]</color>";
 
     public string Scp500Ops { get; set; } =
@@ -15,8 +22,9 @@ public class Config
     public string Scp500Shadow { get; set; } = "<color=#ec3a8b>[You can now pass through doors]</color>";
     public string Scp500Sonic { get; set; } = "<color=#198C19>[SUPER SONIC]</color>";
 
+
     [Description("List of possible items that can be used for Santa")]
-    public List<ItemType> Items { get; set; } = new List<ItemType>
+    public List<ItemType> Items { get; set; } = new()
     {
         ItemType.ArmorHeavy,
         ItemType.ArmorLight,

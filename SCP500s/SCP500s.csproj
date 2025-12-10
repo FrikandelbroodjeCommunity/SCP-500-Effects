@@ -37,6 +37,10 @@
         <Compile Include="Config.cs"/>
         <Compile Include="Main.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="SuperItems\Scp500Aphera.cs" />
+        <Compile Include="SuperItems\Scp500Lucky.cs" />
+        <Compile Include="SuperItems\Scp500Swap.cs" />
+        <Compile Include="SuperItems\Scp500Teleport.cs" />
         <Compile Include="SuperItems\Scp500Ops.cs" />
         <Compile Include="SuperItems\Scp500DrinkMe.cs" />
         <Compile Include="SuperItems\Scp500Santa.cs" />

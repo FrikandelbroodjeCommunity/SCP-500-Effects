@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using FrikanUtils.CustomItems;
-using LabApi.Events.Arguments.ServerEvents;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using UnityEngine;
@@ -15,25 +15,25 @@ public abstract class Scp500Base : CustomItem
 
     protected override void SubscribeEvents()
     {
-        ServerEvents.PickupCreated += AddGlow;
-        ServerEvents.PickupDestroyed += RemoveGlow;
+        PlayerEvents.DroppedItem += AddGlow;
+        PlayerEvents.PickedUpItem += RemoveGlow;
 
         base.SubscribeEvents();
     }
 
     protected override void UnsubscribeEvents()
     {
-        ServerEvents.PickupCreated -= AddGlow;
-        ServerEvents.PickupDestroyed -= RemoveGlow;
+        PlayerEvents.DroppedItem -= AddGlow;
+        PlayerEvents.PickedUpItem -= RemoveGlow;
 
         base.UnsubscribeEvents();
     }
 
-    private void AddGlow(PickupCreatedEventArgs ev)
+    private void AddGlow(PlayerDroppedItemEventArgs ev)
     {
         if (!Check(ev.Pickup.Serial) || ev.Pickup.LastOwner == null) return;
         if (ev.Pickup.Base.transform == null) return;
-
+        
         if (ActiveLights.TryGetValue(ev.Pickup.Serial, out var light))
         {
             light.Transform.parent = ev.Pickup.Base.transform;
@@ -51,11 +51,11 @@ public abstract class Scp500Base : CustomItem
         ActiveLights[ev.Pickup.Serial] = light;
     }
 
-    private void RemoveGlow(PickupDestroyedEventArgs ev)
+    private void RemoveGlow(PlayerPickedUpItemEventArgs ev)
     {
-        if (!Check(ev.Pickup.Serial) || !ActiveLights.TryGetValue(ev.Pickup.Serial, out var light)) return;
+        if (!Check(ev.Item.Serial) || !ActiveLights.TryGetValue(ev.Item.Serial, out var light)) return;
 
         light.Destroy();
-        ActiveLights.Remove(ev.Pickup.Serial);
+        ActiveLights.Remove(ev.Item.Serial);
     }
 }

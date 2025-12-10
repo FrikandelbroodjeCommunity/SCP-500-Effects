@@ -18,35 +18,47 @@ namespace SCP500s
 
         public static Main Instance { get; set; }
 
+        private static readonly Scp500Aphera Aphera = new();
         private static readonly Scp500DrinkMe DrinkMe = new();
+        private static readonly Scp500Lucky Lucky = new();
         private static readonly Scp500Ops Ops = new();
         private static readonly Scp500Santa Santa = new();
         private static readonly Scp500Shadow Shadow = new();
         private static readonly Scp500Sonic Sonic = new();
         private static readonly Scp500Super Super = new();
+        private static readonly Scp500Swap Swap = new();
+        private static readonly Scp500Teleport Teleport = new();
 
         public override void Enable()
         {
             Instance = this;
 
+            CustomItemHandler.RegisterCustomItem(Aphera);
             CustomItemHandler.RegisterCustomItem(DrinkMe);
+            CustomItemHandler.RegisterCustomItem(Lucky);
             CustomItemHandler.RegisterCustomItem(Ops);
             CustomItemHandler.RegisterCustomItem(Santa);
             CustomItemHandler.RegisterCustomItem(Shadow);
             CustomItemHandler.RegisterCustomItem(Sonic);
             CustomItemHandler.RegisterCustomItem(Super);
+            CustomItemHandler.RegisterCustomItem(Swap);
+            CustomItemHandler.RegisterCustomItem(Teleport);
 
             ServerEvents.WaitingForPlayers += OnWaitingForPlayers;
         }
 
         public override void Disable()
         {
+            CustomItemHandler.UnregisterCustomItem(Aphera);
             CustomItemHandler.UnregisterCustomItem(DrinkMe);
+            CustomItemHandler.UnregisterCustomItem(Lucky);
             CustomItemHandler.UnregisterCustomItem(Ops);
             CustomItemHandler.UnregisterCustomItem(Santa);
             CustomItemHandler.UnregisterCustomItem(Shadow);
             CustomItemHandler.UnregisterCustomItem(Sonic);
             CustomItemHandler.UnregisterCustomItem(Super);
+            CustomItemHandler.UnregisterCustomItem(Swap);
+            CustomItemHandler.UnregisterCustomItem(Teleport);
 
             ServerEvents.WaitingForPlayers -= OnWaitingForPlayers;
         }

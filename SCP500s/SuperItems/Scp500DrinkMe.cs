@@ -1,7 +1,6 @@
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
 using LabApi.Features.Wrappers;
-using UnityEngine;
 
 namespace SCP500s.SuperItems;
 
@@ -33,7 +32,7 @@ public class Scp500DrinkMe : Scp500Base
     {
         base.OnUsedItem(player, item);
 
-        player.Scale = Vector3.one * 0.5f;
+        player.Scale *= 0.5f;
         player.SendHint(Main.Instance.Config.Scp500Rakun, 7);
     }
 }
