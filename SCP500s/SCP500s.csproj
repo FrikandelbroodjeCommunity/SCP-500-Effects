@@ -95,14 +95,6 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Content Include="Pictures\SCP500-Rakun.jpg"/>
-        <Content Include="Pictures\SCP500-Santa.jpg"/>
-        <Content Include="Pictures\SCP500-Shadow.jpg"/>
-        <Content Include="Pictures\SCP500-Sonic.jpg"/>
-        <Content Include="Pictures\SCP500-Super.jpg"/>
-        <Content Include="Pictures\SCP500-Traker.jpg"/>
-        <Content Include="Pictures\SCP500.jpeg"/>
-        <Content Include="Pictures\VividZap.jpeg"/>
         <Content Include="Readme.md"/>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
