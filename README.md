@@ -16,6 +16,8 @@ Possible effects:
 - `Sonic` - Gives extreme speed.
 - `Super` - Eat this to move faster and walk silently, but you lose the use of your hands.
 
+# Installation
+
 > [!IMPORTANT]
 > **Required dependencies:**
 > - [FrikanUtils](https://github.com/FrikandelbroodjeCommunity/FrikanUtils/blob/master/FrikanUtils/README.md)

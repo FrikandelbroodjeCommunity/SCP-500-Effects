@@ -13,7 +13,7 @@ namespace SCP500s
         public override string Name => "SCP500s";
         public override string Description => "Adds custom effects to SCP-500";
         public override string Author => "VividZap - Lumi";
-        public override Version Version { get; } = new(4, 0, 0);
+        public override Version Version { get; } = new(1, 0, 0);
         public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
 
         public static Main Instance { get; set; }
