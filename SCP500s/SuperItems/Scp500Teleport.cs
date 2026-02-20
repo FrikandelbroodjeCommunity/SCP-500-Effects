@@ -2,6 +2,7 @@ using System.Linq;
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
 using FrikanUtils.Utilities;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 using MapGeneration;
 using UnityEngine;
@@ -32,11 +33,12 @@ public class Scp500Teleport : Scp500Base
         }
     };
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
 
-        player.SendHint(Main.Instance.Config.Scp500Teleport);
-        player.Position = Room.List.Where(x => x.Shape == RoomShape.Straight).GetRandomElement().Position + Vector3.up;
+        ev.Player.SendHint(Main.Instance.Config.Scp500Teleport);
+        ev.Player.Position = Room.List.Where(x => x.Shape == RoomShape.Straight).GetRandomElement().Position + Vector3.up;
     }
 }

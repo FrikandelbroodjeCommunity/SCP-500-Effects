@@ -1,6 +1,7 @@
 using CustomPlayerEffects;
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 
 namespace SCP500s.SuperItems;
@@ -29,11 +30,12 @@ public class Scp500Shadow : Scp500Base
     };
 
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
-            
-        player.SendHint(Main.Instance.Config.Scp500Shadow, 7);
-        player.EnableEffect<Ghostly>(1, 7);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
+
+        ev.Player.SendHint(Main.Instance.Config.Scp500Shadow, 7);
+        ev.Player.EnableEffect<Ghostly>(1, 7);
     }
 }

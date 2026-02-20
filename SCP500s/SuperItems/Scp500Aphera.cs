@@ -1,5 +1,6 @@
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 
 namespace SCP500s.SuperItems;
@@ -27,12 +28,13 @@ public class Scp500Aphera : Scp500Base
         }
     };
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
-        
-        player.SendHint(Main.Instance.Config.Scp500Aphera);
-        player.Scale *= -1;
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
+
+        ev.Player.SendHint(Main.Instance.Config.Scp500Aphera);
+        ev.Player.Scale *= -1;
     }
     
 }

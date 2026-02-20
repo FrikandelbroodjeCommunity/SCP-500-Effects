@@ -69,8 +69,8 @@
         <Reference Include="FrikanUtils">
             <HintPath>$(SL_DEPENDENCIES)\FrikanUtils.dll</HintPath>
         </Reference>
-        <Reference Include="LabApi, Version=1.1.4.0, Culture=neutral, processorArchitecture=Amd64">
-            <HintPath>..\packages\Northwood.LabAPI.1.1.4\lib\net48\LabApi.dll</HintPath>
+        <Reference Include="LabApi, Version=1.1.5.0, Culture=neutral, processorArchitecture=Amd64">
+          <HintPath>..\packages\Northwood.LabAPI.1.1.5\lib\net48\LabApi.dll</HintPath>
         </Reference>
         <Reference Include="Mirror">
             <HintPath>$(SL_REFERENCES)\Mirror.dll</HintPath>

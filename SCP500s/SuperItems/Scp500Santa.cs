@@ -1,5 +1,6 @@
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 using MEC;
 
@@ -29,17 +30,18 @@ public class Scp500Santa : Scp500Base
         }
     };
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
 
-        player.SendHint(Main.Instance.Config.Scp500Santa, 7);
+        ev.Player.SendHint(Main.Instance.Config.Scp500Santa, 7);
 
         Timing.CallDelayed(.1f, () =>
         {
             var random = Main.Instance.Config.Items.RandomItem();
-            var newItem = player.AddItem(random);
-            player.CurrentItem = newItem;
+            var newItem = ev.Player.AddItem(random);
+            ev.Player.CurrentItem = newItem;
         });
     }
 }

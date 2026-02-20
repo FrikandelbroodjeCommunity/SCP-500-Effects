@@ -1,5 +1,6 @@
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 
 namespace SCP500s.SuperItems;
@@ -28,11 +29,12 @@ public class Scp500DrinkMe : Scp500Base
         }
     };
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
 
-        player.Scale *= 0.5f;
-        player.SendHint(Main.Instance.Config.Scp500Rakun, 7);
+        ev.Player.Scale *= 0.5f;
+        ev.Player.SendHint(Main.Instance.Config.Scp500Rakun, 7);
     }
 }

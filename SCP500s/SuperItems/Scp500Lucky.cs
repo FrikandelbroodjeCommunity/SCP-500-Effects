@@ -1,6 +1,7 @@
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
 using FrikanUtils.Utilities;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 using Random = System.Random;
 
@@ -32,14 +33,15 @@ public class Scp500Lucky : Scp500Base
 
     private static readonly Random Random = new();
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
 
-        player.SendHint(Main.Instance.Config.Scp500Lucky);
-        player.Health = 105;
+        ev.Player.SendHint(Main.Instance.Config.Scp500Lucky);
+        ev.Player.Health = 105;
 
-        player.EnableRandomEffect(Random.Next(0, 2) == 0
+        ev.Player.EnableRandomEffect(Random.Next(0, 2) == 0
             ? EffectUtilities.EffectClassificationFlag.Negative
             : EffectUtilities.EffectClassificationFlag.Positive);
     }

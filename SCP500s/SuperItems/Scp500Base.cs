@@ -1,39 +1,32 @@
 ﻿using System.Collections.Generic;
 using FrikanUtils.CustomItems;
 using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using UnityEngine;
 
 namespace SCP500s.SuperItems;
 
-public abstract class Scp500Base : CustomItem
+public abstract class Scp500Base : CustomUsableItem
 {
     internal static readonly Dictionary<ushort, LightSourceToy> ActiveLights = new();
 
     private static readonly Color GlowColor = new Color32(0x31, 0x33, 0x00, 0x01);
-
-    protected override void SubscribeEvents()
+    
+    protected override void PickedUp(PlayerPickedUpItemEventArgs ev)
     {
-        PlayerEvents.DroppedItem += AddGlow;
-        PlayerEvents.PickedUpItem += RemoveGlow;
+        base.PickedUp(ev);
+        if (!Check(ev.Item.Serial) || !ActiveLights.TryGetValue(ev.Item.Serial, out var light)) return;
 
-        base.SubscribeEvents();
+        light.Destroy();
+        ActiveLights.Remove(ev.Item.Serial);
     }
 
-    protected override void UnsubscribeEvents()
+    protected override void Dropped(PlayerDroppedItemEventArgs ev)
     {
-        PlayerEvents.DroppedItem -= AddGlow;
-        PlayerEvents.PickedUpItem -= RemoveGlow;
-
-        base.UnsubscribeEvents();
-    }
-
-    private void AddGlow(PlayerDroppedItemEventArgs ev)
-    {
+        base.Dropped(ev);
         if (!Check(ev.Pickup.Serial) || ev.Pickup.LastOwner == null) return;
         if (ev.Pickup.Base.transform == null) return;
-        
+
         if (ActiveLights.TryGetValue(ev.Pickup.Serial, out var light))
         {
             light.Transform.parent = ev.Pickup.Base.transform;
@@ -49,13 +42,5 @@ public abstract class Scp500Base : CustomItem
         light.ShadowType = LightShadows.None;
 
         ActiveLights[ev.Pickup.Serial] = light;
-    }
-
-    private void RemoveGlow(PlayerPickedUpItemEventArgs ev)
-    {
-        if (!Check(ev.Item.Serial) || !ActiveLights.TryGetValue(ev.Item.Serial, out var light)) return;
-
-        light.Destroy();
-        ActiveLights.Remove(ev.Item.Serial);
     }
 }

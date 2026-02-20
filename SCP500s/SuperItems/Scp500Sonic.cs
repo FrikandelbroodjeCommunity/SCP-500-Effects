@@ -1,7 +1,7 @@
 using CustomPlayerEffects;
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
-using LabApi.Features.Wrappers;
+using LabApi.Events.Arguments.PlayerEvents;
 
 namespace SCP500s.SuperItems;
 
@@ -29,11 +29,11 @@ public class Scp500Sonic : Scp500Base
         }
     };
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
-
-        player.EnableEffect<MovementBoost>(200, 5);
-        player.SendHint(Main.Instance.Config.Scp500Sonic, 7);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
+        ev.Player.EnableEffect<MovementBoost>(200, 5);
+        ev.Player.SendHint(Main.Instance.Config.Scp500Sonic, 7);
     }
 }

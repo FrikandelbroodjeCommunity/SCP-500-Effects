@@ -1,5 +1,6 @@
 using FrikanUtils.Spawnpoints;
 using FrikanUtils.Spawnpoints.LootSpawn;
+using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 using PlayerRoles;
 
@@ -29,11 +30,12 @@ public class Scp500Swap : Scp500Base
         }
     };
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
 
-        var newRole = player.Role switch
+        var newRole = ev.Player.Role switch
         {
             RoleTypeId.ClassD => RoleTypeId.Scientist,
             RoleTypeId.Scientist => RoleTypeId.ClassD,
@@ -49,7 +51,7 @@ public class Scp500Swap : Scp500Base
             _ => RoleTypeId.ClassD
         };
 
-        player.SetRole(newRole, flags: RoleSpawnFlags.None);
-        player.SendHint(Main.Instance.Config.Scp500Swap);
+        ev.Player.SetRole(newRole, flags: RoleSpawnFlags.None);
+        ev.Player.SendHint(Main.Instance.Config.Scp500Swap);
     }
 }

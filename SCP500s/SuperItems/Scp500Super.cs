@@ -51,18 +51,19 @@ public class Scp500Super : Scp500Base
         PlayerEvents.Hurting -= OnPlayerHurting;
     }
 
-    protected override void OnUsedItem(Player player, UsableItem item)
+    protected override void OnUsedItem(PlayerUsedItemEventArgs ev)
     {
-        base.OnUsedItem(player, item);
+        base.OnUsedItem(ev);
+        if (!Check(ev.UsableItem.Serial)) return;
 
-        player.SendHint(Main.Instance.Config.Scp500Super, 7);
-        player.EnableEffect<Invisible>(1, 7f);
-        player.EnableEffect<MovementBoost>(1, 50);
-        player.EnableEffect<SilentWalk>(1, 7f);
-        player.EnableEffect<SeveredHands>(1, 1f);
-        SeveredHands.Add(player);
+        ev.Player.SendHint(Main.Instance.Config.Scp500Super, 7);
+        ev.Player.EnableEffect<Invisible>(1, 7f);
+        ev.Player.EnableEffect<MovementBoost>(1, 50);
+        ev.Player.EnableEffect<SilentWalk>(1, 7f);
+        ev.Player.EnableEffect<SeveredHands>(1, 1f);
+        SeveredHands.Add(ev.Player);
 
-        Timing.CallDelayed(7f, () => SeveredHands.Remove(player));
+        Timing.CallDelayed(7f, () => SeveredHands.Remove(ev.Player));
     }
 
     private static void OnPlayerHurting(PlayerHurtingEventArgs ev)
